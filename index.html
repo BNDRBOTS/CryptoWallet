@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CipherFolio — Private Crypto Asset Ledger</title>
+  <meta name="description" content="CipherFolio is a local-first cryptocurrency portfolio tracker with real-time market sync, allocation analytics, and no account required.">
+  <meta name="keywords" content="crypto tracker, portfolio, ledger, local-first, private crypto tool, allocation">
+  <meta name="author" content="CipherFolio Systems">
+  <meta name="theme-color" content="#08080c">
+
+  <meta property="og:title" content="CipherFolio — Private Crypto Asset Ledger">
+  <meta property="og:description" content="Local-first crypto portfolio tracking with real-time market data. No account required.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cipherfolio.app/">
+  <meta property="og:site_name" content="CipherFolio">
+  <meta property="og:locale" content="en_US">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CipherFolio — Private Crypto Asset Ledger">
+  <meta name="twitter:description" content="Local-first crypto portfolio tracking with real-time market data.">
+
+  <link rel="canonical" href="https://cipherfolio.app/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 Z%22 fill=%22%2322d3ee%22/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#main" aria-label="CipherFolio home">
+        <svg class="brand-mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 Z" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M50 10 L50 50 L90 70" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M10 70 L50 50" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+          <circle cx="50" cy="50" r="10" fill="currentColor"/>
+        </svg>
+        <span class="brand-text">
+          <span class="brand-name">CipherFolio</span>
+          <span class="brand-tag">Asset Ledger</span>
+        </span>
+      </a>
+
+      <button class="menu-toggle" aria-expanded="false" aria-controls="nav-menu" type="button">
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="sr-only">Toggle menu</span>
+      </button>
+
+      <nav class="nav" id="nav-menu" aria-label="Primary navigation">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#demo">Demo</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="app.html" class="nav-cta">Open App</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <span class="eyebrow">Local-first · Private · Real-time</span>
+          <h1 class="hero-title">Your crypto portfolio, without handing over your data.</h1>
+          <p class="hero-sub">CipherFolio is an institutional asset ledger for individual investors. Track holdings, validate entries against live market data, and see instant P&amp;L — all in your browser.</p>
+          <div class="hero-actions">
+            <a href="app.html" class="btn btn-primary">Open the ledger</a>
+            <a href="#demo" class="btn btn-secondary">Preview live demo</a>
+          </div>
+          <ul class="hero-points">
+            <li>No account required</li>
+            <li>Local browser storage</li>
+            <li>CryptoCompare live sync</li>
+            <li>Deletes stay in your control</li>
+          </ul>
+        </div>
+
+        <div class="hero-visual">
+          <div class="glass visual-panel">
+            <div class="visual-bar">
+              <span class="visual-dot"></span>
+              <span class="visual-dot"></span>
+              <span class="visual-dot"></span>
+              <span class="visual-spacer"></span>
+              <span class="visual-label">LOCAL NODE</span>
+            </div>
+            <div class="visual-body">
+              <div class="visual-row">
+                <div>
+                  <span class="visual-caption">GROSS VALUATION</span>
+                  <span class="visual-value">$0.00</span>
+                </div>
+                <div>
+                  <span class="visual-caption">NET PERFORMANCE</span>
+                  <span class="visual-value">$0.00</span>
+                </div>
+              </div>
+              <div class="visual-chart">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+                  <circle cx="50" cy="50" r="40" stroke="#22d3ee" stroke-width="8" stroke-dasharray="45 55" stroke-linecap="round"/>
+                  <circle cx="50" cy="50" r="30" stroke="rgba(255,255,255,0.05)" stroke-width="6"/>
+                </svg>
+              </div>
+              <p class="visual-note">Your data never leaves this browser.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">Capabilities</p>
+          <h2>Built for a private, fast ledger workflow.</h2>
+          <p>Every feature is implemented directly in the app. No hidden servers, no accounts, no tracking.</p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card glass">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3>Local persistence</h3>
+            <p>Portfolio entries are stored in your browser's localStorage. Close the tab, reopen it — your ledger is still there.</p>
+          </article>
+
+          <article class="feature-card glass">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 3v6h-6"/><path d="M12 7v5l3 3"/></svg>
+            </div>
+            <h3>Live market sync</h3>
+            <p>Uses the public CryptoCompare endpoint to fetch current USD valuations for each asset you enter.</p>
+          </article>
+
+          <article class="feature-card glass">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            </div>
+            <h3>Allocation analytics</h3>
+            <p>A responsive doughnut chart visualizes your portfolio concentration, with hover tooltips and live data updates.</p>
+          </article>
+
+          <article class="feature-card glass">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h3>No account, no API key</h3>
+            <p>The app is fully client-side. No login, no user database, no key management. Just open and track.</p>
+          </article>
+
+          <article class="feature-card glass">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3>Validated entries</h3>
+            <p>Before a ticker is written to the ledger, the app checks it against CryptoCompare and rejects unsupported symbols.</p>
+          </article>
+
+          <article class="feature-card glass">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16"/></svg>
+            </div>
+            <h3>Explicit deletion workflow</h3>
+            <p>A custom confirmation modal protects against accidental purges. Deletion is permanent and under your control.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="section section-alt">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">Workflow</p>
+          <h2>Three steps to a private ledger.</h2>
+          <p>No onboarding flow, no permission prompts, no lock-in.</p>
+        </div>
+
+        <ol class="steps">
+          <li class="step glass">
+            <span class="step-number">01</span>
+            <h3>Enter an asset</h3>
+            <p>Add a ticker, the volume you hold, and your entry price. The form is mobile-safe and keyboard friendly.</p>
+          </li>
+          <li class="step glass">
+            <span class="step-number">02</span>
+            <h3>Validate against market data</h3>
+            <p>The app pings CryptoCompare and confirms the ticker exists. Then it saves the entry locally.</p>
+          </li>
+          <li class="step glass">
+            <span class="step-number">03</span>
+            <h3>Track value and allocation</h3>
+            <p>View gross valuation, net performance, asset allocation, and a detailed registry of every holding.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Demo -->
+    <section id="demo" class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">Live preview</p>
+          <h2>Try CipherFolio right here.</h2>
+          <p>The embedded app is fully functional. For a larger screen and native browser features, open it in a new tab.</p>
+        </div>
+
+        <div class="demo-frame glass">
+          <div class="frame-bar">
+            <span class="frame-dot"></span>
+            <span class="frame-dot"></span>
+            <span class="frame-dot"></span>
+            <span class="frame-spacer"></span>
+            <span class="frame-title">CipherFolio — Ledger Interface</span>
+            <a class="frame-link" href="app.html" target="_blank" rel="noopener">Open full app ↗</a>
+          </div>
+          <iframe src="app.html" loading="lazy" title="CipherFolio interactive demo" referrerpolicy="no-referrer"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="section section-alt">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">Pricing</p>
+          <h2>Start local. Stay local.</h2>
+          <p>The product is free to use in your browser. For custom hosting or license inquiries, contact us.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <article class="price-card glass">
+            <h3>Local Edition</h3>
+            <p class="price">$0</p>
+            <p class="price-desc">Full feature set for individual local tracking. No account, no subscription, no data export lock-in.</p>
+            <a href="app.html" class="btn btn-primary">Launch free app</a>
+          </article>
+
+          <article class="price-card glass">
+            <h3>Custom Deployment</h3>
+            <p class="price">Contact</p>
+            <p class="price-desc">Self-hosting support, white-label packaging, or internal team deployment. Pricing depends on scope.</p>
+            <a href="mailto:sales@cipherfolio.app" class="btn btn-secondary">Contact sales</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">FAQ</p>
+          <h2>Common questions.</h2>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-item glass">
+            <summary>Is my portfolio stored on a server?</summary>
+            <p>No. CipherFolio stores your portfolio in your browser's localStorage. It never sends your holdings to a backend database.</p>
+          </details>
+          <details class="faq-item glass">
+            <summary>Which assets are supported?</summary>
+            <p>Any ticker that the public CryptoCompare API recognizes as a valid symbol with a USD pair.</p>
+          </details>
+          <details class="faq-item glass">
+            <summary>What happens if CryptoCompare is unreachable?</summary>
+            <p>The app falls back to the last known entry price for each asset and shows a network warning. Your local ledger remains available.</p>
+          </details>
+          <details class="faq-item glass">
+            <summary>Do I need to create an account?</summary>
+            <p>No. CipherFolio is a static, client-side application. There is no login, no user system, and no API key to manage.</p>
+          </details>
+          <details class="faq-item glass">
+            <summary>Can I export or clear my data?</summary>
+            <p>You can delete assets individually via the confirmation modal. Clearing your browser storage removes the ledger. The app does not add remote backups.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© <span id="year"></span> CipherFolio Systems. Local-first crypto asset ledger.</p>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="#features">Features</a>
+        <a href="#demo">Demo</a>
+        <a href="#pricing">Pricing</a>
+        <a href="app.html">Open App</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>
