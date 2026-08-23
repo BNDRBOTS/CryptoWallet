@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- SEO & Open Graph Meta Tags -->
+    <title>CipherFolio | Institutional Asset Ledger</title>
+    <meta name="description" content="Secure, real-time cryptocurrency portfolio tracker and institutional asset ledger. engineered for high-frequency updates and local data integrity.">
+    <meta name="keywords" content="cryptocurrency tracker, crypto portfolio, asset ledger, finance dashboard, local-first crypto tool, private portfolio tracker">
+    <meta name="author" content="CipherFolio Systems">
+    
+    <meta property="og:title" content="CipherFolio | Institutional Asset Ledger">
+    <meta property="og:description" content="Secure, real-time cryptocurrency portfolio tracker with zero-dependency local persistence.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cipherfolio.local/">
+    <meta property="og:site_name" content="CipherFolio">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CipherFolio | Institutional Asset Ledger">
+    <meta name="twitter:description" content="Secure, real-time cryptocurrency portfolio tracker.">
+    
+    <!-- Dynamic Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#050507" id="theme-meta">
+    
+    <!-- Custom SVG Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 Z%22 fill=%22%2322d3ee%22/></svg>">
+
+    <!-- Core Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Engine Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    },
+                    colors: {
+                        brand: {
+                            400: '#22d3ee', // Cyan
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            light: '#0ea5e9', // Blue
+                            accent: '#818cf8', // Indigo
+                        },
+                        obsidian: {
+                            900: '#050507',
+                            800: '#0a0a0f',
+                            card: 'rgba(10, 10, 15, 0.70)',
+                            border: 'rgba(255, 255, 255, 0.08)'
+                        },
+                        slate: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            card: 'rgba(255, 255, 255, 0.85)',
+                            border: 'rgba(0, 0, 0, 0.08)'
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'data-update': 'dataUpdate 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'modal-enter': 'modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+                        slideUp: { '0%': { opacity: 0, transform: 'translateY(16px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+                        modalEnter: { '0%': { opacity: 0, transform: 'scale(0.95)' }, '100%': { opacity: 1, transform: 'scale(1)' } },
+                        dataUpdate: { 
+                            '0%': { color: '#22d3ee', textShadow: '0 0 16px rgba(34, 211, 238, 0.6)' }, 
+                            '100%': { color: 'inherit', textShadow: 'none' } 
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Architecture */
+        body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        .dark body {
+            background-color: #050507;
+            color: #f8fafc;
+        }
+
+        /* Ambient Physics Canvas (Hardware Accelerated) */
+        #ambient-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            transform: translateZ(0); /* Force GPU */
+        }
+
+        /* High-Fidelity Glass Panels */
+        .panel {
+            background: var(--tw-colors-slate-card);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid var(--tw-colors-slate-border);
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border-radius: 1.25rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        .dark .panel {
+            background: var(--tw-colors-obsidian-card);
+            border: 1px solid var(--tw-colors-obsidian-border);
+            box-shadow: 0 8px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* Scrollbar Hardening - Prevents visual glitches on overflow */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 6px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(14, 165, 233, 0.6); }
+        .dark ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }
+        .dark ::-webkit-scrollbar-thumb:hover { background: rgba(34, 211, 238, 0.5); }
+
+        /* Input Normalization - Prevents forced layout shifts and iOS auto-zoom */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+        input { font-size: 16px !important; } /* Strict 16px to disable iOS form zoom */
+
+        /* Toast Animation States */
+        .toast-enter { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .toast-exit { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) reverse forwards; }
+        .value-updated { animation: data-update 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-brand-light dark:selection:bg-brand-500 selection:text-white">
+
+    <!-- Z-Index -1: Ambient Canvas -->
+    <canvas id="ambient-canvas"></canvas>
+    
+    <!-- Z-Index 100: Custom Deletion Modal (Replaces window.confirm) -->
+    <div id="delete-modal-overlay" class="fixed inset-0 z-[100] bg-slate-900/60 dark:bg-black/80 backdrop-blur-md hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="panel p-6 sm:p-8 w-full max-w-md transform scale-95 transition-transform duration-300 flex flex-col gap-5" id="delete-modal-card">
+            <div class="flex items-center gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
+                <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white font-mono tracking-tight">CONFIRM PURGE</h3>
+                    <p class="text-xs text-slate-500 dark:text-gray-400 mt-1">Irreversible ledger mutation.</p>
+                </div>
+            </div>
+            <p class="text-sm text-slate-700 dark:text-gray-300 font-medium leading-relaxed" id="delete-modal-text">Are you sure you want to permanently delete this asset?</p>
+            <div class="flex flex-col sm:flex-row items-center gap-3 mt-2">
+                <button id="btn-cancel-delete" class="w-full sm:w-1/2 px-4 py-3 rounded-lg border border-slate-300 dark:border-white/10 text-slate-700 dark:text-gray-300 font-mono text-sm font-semibold hover:bg-slate-100 dark:hover:bg-white/5 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400">ABORT</button>
+                <button id="btn-confirm-delete" class="w-full sm:w-1/2 px-4 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-mono text-sm font-semibold transition-colors shadow-lg shadow-red-500/20 focus:outline-none focus:ring-2 focus:ring-red-500">EXECUTE PURGE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Z-Index 90: Toast Notification Layer -->
+    <div id="toast-container" class="fixed bottom-6 right-4 sm:right-6 md:right-8 z-[90] flex flex-col gap-3 pointer-events-none w-full max-w-[calc(100vw-2rem)] sm:max-w-sm ml-auto"></div>
+
+    <!-- Z-Index 40: Primary Navigation -->
+    <nav class="sticky top-0 z-[40] bg-slate-50/80 dark:bg-obsidian-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 py-3 sm:py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center w-full transition-all duration-300 shadow-sm dark:shadow-none">
+        <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+            <!-- Custom Geometric Logo (Responsive) -->
+            <div class="relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0">
+                <div class="absolute inset-0 bg-brand-light/20 dark:bg-brand-500/20 rounded-xl blur-md animate-pulse-slow"></div>
+                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-brand-light dark:text-brand-400 relative z-10 transition-colors duration-300" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10 L90 30 L90 70 L50 90 L10 70 L10 30 Z" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+                    <path d="M50 10 L50 50 L90 70" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+                    <path d="M10 70 L50 50" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+                    <circle cx="50" cy="50" r="10" fill="currentColor"/>
+                </svg>
+            </div>
+            <div class="flex flex-col min-w-0">
+                <h1 class="text-base sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white leading-none truncate transition-colors duration-300">CipherFolio</h1>
+                <span class="text-[9px] sm:text-[10px] uppercase tracking-widest sm:tracking-[0.2em] text-brand-light dark:text-brand-400 font-mono mt-1 truncate transition-colors duration-300">Terminal Active</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" class="p-2 sm:p-2.5 rounded-lg bg-slate-200/50 dark:bg-white/5 hover:bg-slate-300/50 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10 transition-all text-slate-600 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-light/50 dark:focus:ring-brand-500/50" aria-label="Toggle Theme">
+                <svg id="icon-sun" class="w-4 h-4 sm:w-5 sm:h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+
+            <!-- Network Status Indicator -->
+            <div id="system-status" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-200/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 transition-colors duration-300">
+                <span class="relative flex h-2 w-2">
+                  <span id="status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-light dark:bg-brand-400 opacity-75"></span>
+                  <span id="status-dot" class="relative inline-flex rounded-full h-2 w-2 bg-brand-light dark:bg-brand-500"></span>
+                </span>
+                <span id="auth-text" class="text-[10px] sm:text-xs font-mono text-slate-600 dark:text-gray-300 font-medium tracking-wide">LOCAL NODE</span>
+            </div>
+
+            <!-- Sync Data Button -->
+            <button id="refresh-btn" class="p-2 sm:p-2.5 rounded-lg bg-slate-200/50 dark:bg-white/5 hover:bg-slate-300/50 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10 transition-all text-slate-600 dark:text-gray-400 hover:text-brand-light dark:hover:text-brand-400 disabled:opacity-50 disabled:cursor-not-allowed group focus:outline-none focus:ring-2 focus:ring-brand-light/50 dark:focus:ring-brand-500/50" aria-label="Force Network Sync">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-180 transition-transform duration-700 ease-in-out" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Z-Index 10: Main Layout -->
+    <main class="flex-grow max-w-[1440px] w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 xl:grid-cols-12 gap-6 sm:gap-8 opacity-0 transition-opacity duration-700 z-[10]" id="main-content">
+        
+        <!-- Left Column: Metrics & Visualization -->
+        <div class="xl:col-span-8 flex flex-col gap-6 sm:gap-8 min-w-0">
+            
+            <!-- Global Statistics Layer -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                
+                <!-- Card: Gross Valuation -->
+                <div class="panel p-6 sm:p-8 relative overflow-hidden group hover:border-brand-light/40 dark:hover:border-brand-500/40 transition-colors duration-500 flex flex-col justify-between min-h-[140px]">
+                    <div class="absolute -right-16 -top-16 w-56 h-56 bg-brand-light/5 dark:bg-brand-500/10 rounded-full blur-3xl group-hover:bg-brand-light/10 dark:group-hover:bg-brand-500/20 transition-all duration-500 pointer-events-none"></div>
+                    <h3 class="text-xs sm:text-sm font-mono tracking-widest text-slate-500 dark:text-gray-400 mb-3 relative z-10">GROSS VALUATION (USD)</h3>
+                    <div class="flex items-baseline gap-2 relative z-10">
+                        <span class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white tracking-tight font-mono transition-colors duration-300 truncate" id="total-value" title="$0.00">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Card: Net Performance -->
+                <div class="panel p-6 sm:p-8 relative overflow-hidden group hover:border-brand-accent/40 transition-colors duration-500 flex flex-col justify-between min-h-[140px]">
+                     <div class="absolute -right-16 -top-16 w-56 h-56 bg-brand-accent/5 dark:bg-brand-accent/10 rounded-full blur-3xl group-hover:bg-brand-accent/10 dark:group-hover:bg-brand-accent/20 transition-all duration-500 pointer-events-none"></div>
+                    <h3 class="text-xs sm:text-sm font-mono tracking-widest text-slate-500 dark:text-gray-400 mb-3 relative z-10">NET PERFORMANCE</h3>
+                    <div class="flex flex-col relative z-10">
+                        <span class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-slate-400 dark:text-gray-500 font-mono transition-colors duration-500 truncate" id="total-pl-value" title="$0.00">$0.00</span>
+                        <div class="mt-3 h-7 flex items-center">
+                            <span class="text-xs font-mono hidden items-center gap-1.5 px-2.5 py-1.5 bg-slate-200/50 dark:bg-white/5 rounded-md w-fit transition-all duration-500 text-slate-500 dark:text-gray-400 border border-slate-300 dark:border-white/5" id="total-pl-percent">
+                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-gray-500" id="pl-dot"></span> 
+                                <span id="pl-text">0.00%</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asset Allocation Chart Engine -->
+            <div class="panel p-5 sm:p-8 h-[350px] md:h-[450px] flex flex-col relative w-full overflow-hidden">
+                <div class="flex justify-between items-center mb-4 sm:mb-6 shrink-0 relative z-20">
+                    <h3 class="text-xs sm:text-sm font-mono tracking-widest text-slate-800 dark:text-white font-semibold">ASSET ALLOCATION</h3>
+                    <div class="flex items-center gap-2 text-[10px] sm:text-xs font-mono text-slate-500 dark:text-gray-400 bg-slate-100 dark:bg-white/5 px-2 py-1 rounded-md border border-slate-200 dark:border-white/10">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand-light dark:bg-brand-400 animate-pulse"></span>
+                        <span>LIVE DATA</span>
+                    </div>
+                </div>
+                
+                <div class="flex-grow relative w-full h-full min-h-[200px]">
+                    <canvas id="portfolioChart" class="relative z-10 w-full h-full"></canvas>
+                    
+                    <!-- Custom SVG Empty State for Chart -->
+                    <div id="chart-empty-state" class="absolute inset-0 z-0 flex flex-col items-center justify-center text-slate-400 dark:text-gray-600 opacity-0 transition-opacity duration-500 pointer-events-none">
+                        <svg class="w-16 h-16 sm:w-20 sm:h-20 mb-4 opacity-40 dark:opacity-20 transition-opacity" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="3" stroke-dasharray="6 6"/>
+                            <path d="M50 20 A30 30 0 0 1 80 50" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="80" cy="50" r="5" fill="currentColor"/>
+                            <circle cx="50" cy="50" r="15" stroke="currentColor" stroke-width="2" stroke-dasharray="2 4"/>
+                        </svg>
+                        <p class="text-[10px] sm:text-xs font-mono tracking-widest font-semibold uppercase">Awaiting Ledger Data</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Form Input & Registry Ledger -->
+        <div class="xl:col-span-4 flex flex-col gap-6 sm:gap-8 min-w-0">
+            
+            <!-- Entry Execution Form -->
+            <div class="panel p-5 sm:p-6 relative overflow-hidden shrink-0">
+                <div class="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-brand-light via-brand-accent to-violet-500 dark:from-brand-400 dark:via-brand-accent dark:to-purple-500"></div>
+                <h3 class="text-xs sm:text-sm font-mono tracking-widest text-slate-800 dark:text-white font-semibold mb-5">EXECUTE ENTRY</h3>
+                
+                <form id="add-asset-form" class="flex flex-col gap-4 sm:gap-5">
+                    
+                    <!-- Ticker Input -->
+                    <div class="relative">
+                        <label class="block text-[10px] sm:text-xs font-mono tracking-widest text-slate-500 dark:text-gray-400 mb-1.5 font-semibold" for="symbol">ASSET TICKER</label>
+                        <div class="relative group">
+                            <!-- Ensure text-base to prevent mobile safari zoom on focus -->
+                            <input type="text" id="symbol" required placeholder="e.g. BTC" autocomplete="off" spellcheck="false" class="w-full bg-slate-50 dark:bg-obsidian-900 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand-light dark:focus:border-brand-500 focus:ring-1 focus:ring-brand-light dark:focus:ring-brand-500 transition-all uppercase placeholder-slate-400 dark:placeholder-gray-700 font-mono tracking-widest text-base shadow-inner group-hover:border-slate-400 dark:group-hover:border-white/20">
+                            <!-- Input Adornment -->
+                            <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                                <svg class="w-4 h-4 text-slate-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Volume & Price Matrix -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] sm:text-xs font-mono tracking-widest text-slate-500 dark:text-gray-400 mb-1.5 font-semibold" for="amount">VOLUME HELD</label>
+                            <input type="number" id="amount" required min="0.00000001" step="any" placeholder="0.00" class="w-full bg-slate-50 dark:bg-obsidian-900 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand-light dark:focus:border-brand-500 focus:ring-1 focus:ring-brand-light dark:focus:ring-brand-500 transition-all font-mono text-base shadow-inner hover:border-slate-400 dark:hover:border-white/20">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] sm:text-xs font-mono tracking-widest text-slate-500 dark:text-gray-400 mb-1.5 font-semibold" for="price">ENTRY PRICE ($)</label>
+                            <input type="number" id="price" required min="0.00000001" step="any" placeholder="0.00" class="w-full bg-slate-50 dark:bg-obsidian-900 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brand-light dark:focus:border-brand-500 focus:ring-1 focus:ring-brand-light dark:focus:ring-brand-500 transition-all font-mono text-base shadow-inner hover:border-slate-400 dark:hover:border-white/20">
+                        </div>
+                    </div>
+
+                    <!-- Execution Action -->
+                    <button type="submit" id="submit-btn" class="mt-2 w-full bg-slate-200/50 dark:bg-white/5 hover:bg-brand-light/10 dark:hover:bg-brand-500/20 text-slate-800 dark:text-white border border-slate-300 dark:border-white/10 hover:border-brand-light dark:hover:border-brand-500 font-mono tracking-widest text-xs sm:text-sm font-semibold py-3.5 sm:py-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-brand-light/50">
+                        <div class="absolute inset-0 bg-brand-light/10 dark:bg-brand-500/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                        <span class="relative z-10">WRITE TO LEDGER</span>
+                        <svg class="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Ledger Registry List -->
+            <div class="panel flex-grow flex flex-col overflow-hidden min-h-[400px]">
+                <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-white/10 flex justify-between items-center bg-slate-100/50 dark:bg-white/[0.02] shrink-0">
+                    <h3 class="text-xs sm:text-sm font-mono tracking-widest text-slate-800 dark:text-white font-semibold">REGISTRY</h3>
+                    <span class="text-[9px] sm:text-[10px] font-mono tracking-widest text-slate-500 dark:text-gray-400 bg-slate-200 dark:bg-obsidian-900 px-2.5 py-1 sm:py-1.5 rounded-md border border-slate-300 dark:border-white/10 font-semibold" id="asset-count">0 NODES</span>
+                </div>
+                
+                <div class="flex-grow overflow-y-auto p-3 sm:p-4 custom-scrollbar relative" id="asset-list">
+                    <!-- Loading Skeleton State -->
+                    <div id="list-loading" class="absolute inset-0 p-3 sm:p-4 flex flex-col gap-3 bg-slate-50/80 dark:bg-obsidian-card z-10 backdrop-blur-md hidden">
+                        <div class="h-20 bg-slate-200 dark:bg-white/5 rounded-xl animate-pulse"></div>
+                        <div class="h-20 bg-slate-200 dark:bg-white/5 rounded-xl animate-pulse" style="animation-delay: 0.1s"></div>
+                        <div class="h-20 bg-slate-200 dark:bg-white/5 rounded-xl animate-pulse" style="animation-delay: 0.2s"></div>
+                    </div>
+                    
+                    <!-- Structural Empty State (Custom SVG) -->
+                    <div id="list-empty" class="h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 dark:text-gray-500 opacity-0 transition-opacity duration-500 pointer-events-none">
+                        <svg class="w-16 h-16 sm:w-20 sm:h-20 mb-5 opacity-40 dark:opacity-30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="20" y="30" width="60" height="45" rx="6" stroke="currentColor" stroke-width="4"/>
+                            <path d="M30 30 V20 A20 20 0 0 1 70 20 V30" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="50" cy="52" r="6" stroke="currentColor" stroke-width="4"/>
+                            <path d="M50 58 V66" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="20" y1="40" x2="80" y2="40" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 4"/>
+                        </svg>
+                        <p class="text-xs sm:text-sm font-mono tracking-widest font-bold text-slate-600 dark:text-gray-400">REGISTRY EMPTY</p>
+                        <p class="text-[10px] sm:text-xs mt-2 font-sans text-slate-500 dark:text-gray-500 max-w-[220px] leading-relaxed">Initialize node ledger by executing a cryptographic entry above.</p>
+                    </div>
+
+                    <!-- Dynamic Data Container -->
+                    <div id="assets-container" class="flex flex-col gap-3 relative z-0"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /**
+         * CIPHERFOLIO CORE LOGIC
+         * Architecture: Vanilla Javascript / Zero Dependency / DOM Safe / Static Client
+         * Deployment Target: Edge / Static (Vercel, Railway Static, Netlify)
+         */
+
+        // System state encapsulates application logic safely isolated from global scope.
+        const APP_STATE = {
+            portfolio: [],
+            prices: {},
+            isFetching: false,
+            chartInstance: null,
+            theme: 'dark',
+            pendingDeletionTarget: null // Tracks asset awaiting modal confirmation
+        };
+
+        // Cached DOM query mapping for hyper-efficient reflow manipulation.
+        const DOM = {
+            body: document.documentElement,
+            totalValue: document.getElementById('total-value'),
+            totalPlValue: document.getElementById('total-pl-value'),
+            totalPlPercent: document.getElementById('total-pl-percent'),
+            plDot: document.getElementById('pl-dot'),
+            plText: document.getElementById('pl-text'),
+            assetList: document.getElementById('assets-container'),
+            listEmpty: document.getElementById('list-empty'),
+            listLoading: document.getElementById('list-loading'),
+            assetCount: document.getElementById('asset-count'),
+            form: document.getElementById('add-asset-form'),
+            refreshBtn: document.getElementById('refresh-btn'),
+            mainContent: document.getElementById('main-content'),
+            chartEmpty: document.getElementById('chart-empty-state'),
+            themeToggle: document.getElementById('theme-toggle'),
+            iconSun: document.getElementById('icon-sun'),
+            iconMoon: document.getElementById('icon-moon'),
+            themeMeta: document.getElementById('theme-meta'),
+            canvas: document.getElementById('ambient-canvas'),
+            
+            // Modal DOM
+            deleteModalOverlay: document.getElementById('delete-modal-overlay'),
+            deleteModalCard: document.getElementById('delete-modal-card'),
+            btnCancelDelete: document.getElementById('btn-cancel-delete'),
+            btnConfirmDelete: document.getElementById('btn-confirm-delete'),
+            deleteModalText: document.getElementById('delete-modal-text')
+        };
+
+        /* ====================================================================
+           SECURITY & SANITIZATION LAYER
+           ==================================================================== */
+        
+        /**
+         * XSS Prevention: Strict text-node isolation.
+         * Creates a disjoint DOM element to securely escape raw text into encoded HTML.
+         */
+        const sanitizeText = (str) => {
+            if (typeof str !== 'string') return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        };
+
+        /**
+         * Input Sanitization: Strict alphanumeric regex filter.
+         * Enforces rigid symbol structural integrity before API calls.
+         */
+        const cleanSymbol = (str) => {
+            return (str || '').replace(/[^A-Z0-9]/gi, '').toUpperCase().trim();
+        };
+
+        const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
+        const formatNum = (num) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 6 }).format(num);
+
+        /* ====================================================================
+           LOCAL PERSISTENCE LAYER (Zero-Dependency Database Equivalent)
+           ==================================================================== */
+        const Storage = {
+            KEY: 'cipherFolio_ledger_v2',
+            load: () => {
+                try {
+                    const data = localStorage.getItem(Storage.KEY);
+                    return data ? JSON.parse(data) : [];
+                } catch (e) {
+                    console.error("Storage Parse Error:", e);
+                    return [];
+                }
+            },
+            save: (data) => {
+                try {
+                    localStorage.setItem(Storage.KEY, JSON.stringify(data));
+                    return true;
+                } catch (e) {
+                    console.error("Storage Write Error:", e);
+                    showToast("STORAGE FAULT", "Unable to persist data to local storage bounds.", "error");
+                    return false;
+                }
+            }
+        };
+
+        /* ====================================================================
+           BOOT SEQUENCE & HYDRATION
+           ==================================================================== */
+        function initApp() {
+            // Documented: Native bypassing of React hydration errors by initializing logic 
+            // strictly after DOMContentLoaded parsing is complete.
+            initTheme();
+            initCanvasBackground();
+            initChart();
+            setupEventListeners();
+            
+            // Retrieve strictly typed local ledger data
+            APP_STATE.portfolio = Storage.load();
+            
+            // Execute seamless UI fade-in
+            DOM.mainContent.classList.add('opacity-100');
+            DOM.mainContent.classList.remove('opacity-0');
+
+            if (APP_STATE.portfolio.length > 0) {
+                const uniqueSymbols = [...new Set(APP_STATE.portfolio.map(p => p.symbol))];
+                fetchPrices(uniqueSymbols);
+            } else {
+                renderUI();
+            }
+        }
+
+        /* ====================================================================
+           THEME ENGINE
+           ==================================================================== */
+        function initTheme() {
+            const savedTheme = localStorage.getItem('cipherFolio_theme');
+            if (savedTheme === 'light' || (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                setTheme('light');
+            } else {
+                setTheme('dark');
+            }
+        }
+
+        function setTheme(theme) {
+            APP_STATE.theme = theme;
+            if (theme === 'light') {
+                DOM.body.classList.remove('dark');
+                DOM.iconSun.classList.add('hidden');
+                DOM.iconMoon.classList.remove('hidden');
+                DOM.themeMeta.setAttribute('content', '#f1f5f9');
+            } else {
+                DOM.body.classList.add('dark');
+                DOM.iconMoon.classList.add('hidden');
+                DOM.iconSun.classList.remove('hidden');
+                DOM.themeMeta.setAttribute('content', '#050507');
+            }
+            localStorage.setItem('cipherFolio_theme', theme);
+            
+            if (APP_STATE.chartInstance) {
+                const isDark = theme === 'dark';
+                Chart.defaults.color = isDark ? '#94a3b8' : '#64748b';
+                APP_STATE.chartInstance.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#475569';
+                APP_STATE.chartInstance.update();
+            }
+        }
+
+        function toggleTheme() {
+            setTheme(APP_STATE.theme === 'dark' ? 'light' : 'dark');
+        }
+
+        /* ====================================================================
+           NETWORK & DATA LAYER
+           ==================================================================== */
+        async function fetchPrices(symbolsToFetch) {
+            if (!symbolsToFetch || symbolsToFetch.length === 0) return;
+            if (APP_STATE.isFetching) return;
+            
+            APP_STATE.isFetching = true;
+            DOM.refreshBtn.classList.add('animate-spin', 'text-brand-light', 'dark:text-brand-400');
+            DOM.refreshBtn.disabled = true;
+
+            try {
+                const symbols = symbolsToFetch.map(cleanSymbol).join(',');
+                const res = await fetch(`https://min-api.cryptocompare.com/data/pricemulti?fsyms=${symbols}&tsyms=USD`);
+                
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const responseData = await res.json();
+                
+                if (responseData.Response === "Error") throw new Error(responseData.Message);
+
+                let updatedCount = 0;
+                symbolsToFetch.forEach(symbol => {
+                    const clean = cleanSymbol(symbol);
+                    if (responseData[clean] && responseData[clean].USD) {
+                        APP_STATE.prices[clean] = parseFloat(responseData[clean].USD);
+                        updatedCount++;
+                    }
+                });
+
+                if (updatedCount > 0) showToast("MARKET SYNC", "Ledger synchronized with active market data.", "success");
+                else showToast("SYNC WARNING", "No valid market node data returned.", "warning");
+                
+            } catch (error) {
+                console.error("Data Fetch Fault:", error);
+                showToast("NETWORK FAULT", "Utilizing last verified local valuations.", "error");
+            } finally {
+                APP_STATE.isFetching = false;
+                DOM.refreshBtn.classList.remove('animate-spin', 'text-brand-light', 'dark:text-brand-400');
+                DOM.refreshBtn.disabled = false;
+                renderUI(); 
+            }
+        }
+
+        async function executeLedgerEntry(rawSymbol, amountStr, priceStr) {
+            const symbol = cleanSymbol(rawSymbol);
+            const amount = parseFloat(amountStr);
+            const price = parseFloat(priceStr);
+
+            if (!symbol || isNaN(amount) || amount <= 0 || isNaN(price) || price <= 0) {
+                showToast("INPUT FAULT", "Invalid ledger parameters detected.", "error");
+                return;
+            }
+
+            const submitBtn = document.getElementById('submit-btn');
+            const originalHTML = submitBtn.innerHTML;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span class="relative z-10 flex items-center gap-2"><svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> VERIFYING...</span>`;
+
+            try {
+                // Strict Pre-flight Validation: Reject nonexistent market symbols
+                const res = await fetch(`https://min-api.cryptocompare.com/data/price?fsym=${symbol}&tsyms=USD`);
+                if (!res.ok) throw new Error('API Fault');
+                const data = await res.json();
+                
+                if (data.Response === 'Error' || typeof data.USD === 'undefined') {
+                    showToast("REJECTED", `Node '${symbol}' lacks active market pairs.`, "error");
+                    return;
+                }
+                
+                APP_STATE.prices[symbol] = data.USD;
+
+                // Core Mathematical Consolidation
+                const existingIndex = APP_STATE.portfolio.findIndex(a => a.symbol === symbol);
+                let newAmount = amount;
+                let newAvgPrice = price;
+
+                if (existingIndex > -1) {
+                    const existingAsset = APP_STATE.portfolio[existingIndex];
+                    const currentTotalCost = existingAsset.amount * existingAsset.avgPrice;
+                    const newTotalCost = newAmount * newAvgPrice;
+                    newAmount = existingAsset.amount + amount;
+                    newAvgPrice = (currentTotalCost + newTotalCost) / newAmount;
+                    
+                    APP_STATE.portfolio[existingIndex] = {
+                        symbol, amount: newAmount, avgPrice: newAvgPrice, updatedAt: Date.now()
+                    };
+                } else {
+                    APP_STATE.portfolio.push({
+                        symbol, amount: newAmount, avgPrice: newAvgPrice, updatedAt: Date.now()
+                    });
+                }
+
+                if(Storage.save(APP_STATE.portfolio)) {
+                    DOM.form.reset();
+                    showToast("ENTRY COMMITTED", `${symbol} appended to internal ledger.`, "success");
+                    renderUI();
+                }
+
+            } catch (error) {
+                console.error("Write Fault:", error);
+                showToast("NETWORK FAULT", "Validation ping failed. Connection required for node generation.", "error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHTML;
+            }
+        }
+
+        /* ====================================================================
+           CUSTOM MODAL DELETION WORKFLOW
+           ==================================================================== */
+        window.initiateAssetDeletion = (rawSymbol) => {
+             const symbol = cleanSymbol(rawSymbol);
+             APP_STATE.pendingDeletionTarget = symbol;
+             
+             DOM.deleteModalText.innerHTML = `Execute permanent cryptographic purge of <strong class="text-brand-light dark:text-brand-400 font-bold">${sanitizeText(symbol)}</strong> from the local node registry?`;
+             
+             DOM.deleteModalOverlay.classList.remove('hidden');
+             DOM.deleteModalOverlay.classList.add('flex');
+             // Trigger reflow for animation
+             void DOM.deleteModalOverlay.offsetWidth;
+             DOM.deleteModalOverlay.classList.remove('opacity-0');
+             DOM.deleteModalOverlay.classList.add('opacity-100');
+             DOM.deleteModalCard.classList.remove('scale-95');
+             DOM.deleteModalCard.classList.add('scale-100');
+        }
+
+        function closeDeleteModal() {
+            APP_STATE.pendingDeletionTarget = null;
+            DOM.deleteModalOverlay.classList.remove('opacity-100');
+            DOM.deleteModalOverlay.classList.add('opacity-0');
+            DOM.deleteModalCard.classList.remove('scale-100');
+            DOM.deleteModalCard.classList.add('scale-95');
+            setTimeout(() => {
+                DOM.deleteModalOverlay.classList.remove('flex');
+                DOM.deleteModalOverlay.classList.add('hidden');
+            }, 300); // Matches transition duration
+        }
+
+        function confirmAssetDeletion() {
+            if (!APP_STATE.pendingDeletionTarget) return;
+            const symbol = APP_STATE.pendingDeletionTarget;
+            
+            APP_STATE.portfolio = APP_STATE.portfolio.filter(a => a.symbol !== symbol);
+             
+            if(Storage.save(APP_STATE.portfolio)) {
+                showToast("NODE PURGED", `${symbol} permanently erased from ledger.`, "success");
+                renderUI();
+            }
+            closeDeleteModal();
+        }
+
+        /* ====================================================================
+           UI RENDERING ENGINE
+           ==================================================================== */
+        function renderUI() {
+            DOM.listLoading.classList.add('hidden');
+            
+            if (APP_STATE.portfolio.length === 0) {
+                DOM.listEmpty.classList.replace('opacity-0', 'opacity-100');
+                DOM.assetList.innerHTML = '';
+                updateHeaderTotals(0, 0, 0);
+                DOM.chartEmpty.classList.replace('opacity-0', 'opacity-100');
+                if(APP_STATE.chartInstance) {
+                    APP_STATE.chartInstance.data.datasets[0].data = [];
+                    APP_STATE.chartInstance.update();
+                }
+                DOM.assetCount.innerText = '0 NODES';
+                return;
+            }
+
+            DOM.listEmpty.classList.replace('opacity-100', 'opacity-0');
+            DOM.chartEmpty.classList.replace('opacity-100', 'opacity-0');
+            
+            let totalValueUsd = 0;
+            let totalCostUsd = 0;
+            const chartLabels = [];
+            const chartData = [];
+            const chartBackgrounds = [];
+
+            const enrichedData = APP_STATE.portfolio.map(asset => {
+                const currentPrice = APP_STATE.prices[asset.symbol] || asset.avgPrice || 0;
+                const value = asset.amount * currentPrice;
+                const cost = asset.amount * asset.avgPrice;
+                const pl = value - cost;
+                const plPercent = cost > 0 ? (pl / cost) * 100 : 0;
+                return { ...asset, currentPrice, value, cost, pl, plPercent };
+            }).sort((a, b) => b.value - a.value);
+
+            const fragment = document.createDocumentFragment();
+
+            enrichedData.forEach((asset, index) => {
+                totalValueUsd += asset.value;
+                totalCostUsd += asset.cost;
+
+                if (asset.value > 0) {
+                    chartLabels.push(sanitizeText(asset.symbol));
+                    chartData.push(asset.value);
+                    chartBackgrounds.push(getChartColor(index));
+                }
+
+                const isProfit = asset.pl >= 0;
+                const plColorClass = isProfit ? 'text-brand-600 dark:text-brand-400' : 'text-red-600 dark:text-red-400';
+                const plBgClass = isProfit ? 'bg-brand-100 dark:bg-brand-400/10' : 'bg-red-100 dark:bg-red-400/10';
+                const plIcon = isProfit ? '+' : '';
+
+                const card = document.createElement('div');
+                // Rigorous Flexbox logic implemented to prevent absolute positioning overlap constraints.
+                card.className = 'bg-white/90 dark:bg-white/[0.02] hover:bg-white dark:hover:bg-white/[0.05] border border-slate-200 dark:border-white/5 rounded-xl p-4 sm:p-5 flex flex-wrap sm:flex-nowrap justify-between items-center gap-4 transition-all duration-300 group hover:border-brand-light/40 dark:hover:border-brand-500/40 shadow-sm dark:shadow-none relative overflow-hidden';
+                
+                const trashSVG = `<svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 sm:gap-4 z-10 flex-1 min-w-0">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-slate-100 dark:bg-obsidian-900 border border-slate-200 dark:border-white/10 flex items-center justify-center font-mono font-bold text-slate-800 dark:text-white shadow-inner shrink-0 group-hover:text-brand-light dark:group-hover:text-brand-400 transition-colors text-xs sm:text-sm">
+                            ${sanitizeText(asset.symbol).substring(0,4)}
+                        </div>
+                        <div class="min-w-0">
+                            <div class="font-mono font-bold text-slate-900 dark:text-white tracking-widest text-sm sm:text-base truncate">${sanitizeText(asset.symbol)}</div>
+                            <div class="text-[10px] sm:text-xs text-slate-500 dark:text-gray-400 font-mono mt-0.5 truncate">${formatNum(asset.amount)} VOL</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 sm:gap-4 shrink-0 z-10">
+                        <div class="text-right flex flex-col items-end">
+                            <div class="font-mono font-bold text-slate-900 dark:text-white text-sm sm:text-base value-updated">${formatCurrency(asset.value)}</div>
+                            <div class="text-[10px] sm:text-xs ${plColorClass} font-mono mt-1 flex items-center gap-1 ${plBgClass} px-2 py-0.5 rounded-md border border-transparent font-medium">
+                                ${plIcon}${formatCurrency(asset.pl)} (${plIcon}${asset.plPercent.toFixed(2)}%)
+                            </div>
+                        </div>
+
+                        <!-- Flex sibling button replacing absolute positioning overlap hack -->
+                        <button type="button" aria-label="Delete Asset" onclick="initiateAssetDeletion('${sanitizeText(asset.symbol)}')" class="p-2 sm:p-2.5 rounded-lg text-slate-400 hover:bg-red-500/10 hover:text-red-500 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50 shrink-0 border border-transparent hover:border-red-500/20">
+                            ${trashSVG}
+                        </button>
+                    </div>
+                `;
+                fragment.appendChild(card);
+            });
+
+            DOM.assetList.innerHTML = '';
+            DOM.assetList.appendChild(fragment);
+
+            DOM.assetCount.innerText = `${enrichedData.length} NODE${enrichedData.length !== 1 ? 'S' : ''}`;
+            
+            const totalPl = totalValueUsd - totalCostUsd;
+            const totalPlPercent = totalCostUsd > 0 ? (totalPl / totalCostUsd) * 100 : 0;
+            
+            updateHeaderTotals(totalValueUsd, totalPl, totalPlPercent);
+            updateChartData(chartLabels, chartData, chartBackgrounds);
+        }
+
+        function updateHeaderTotals(val, pl, plPct) {
+            DOM.totalValue.classList.remove('value-updated');
+            void DOM.totalValue.offsetWidth; 
+            DOM.totalValue.classList.add('value-updated');
+            DOM.totalValue.innerText = formatCurrency(val);
+            
+            const isProfit = pl >= 0;
+            const plColorClass = isProfit ? 'text-brand-600 dark:text-brand-400' : 'text-red-600 dark:text-red-400';
+            const bgDot = isProfit ? 'bg-brand-500 dark:bg-brand-400' : 'bg-red-500 dark:bg-red-400';
+            const borderClass = isProfit ? 'border-brand-200 dark:border-brand-500/20' : 'border-red-200 dark:border-red-500/20';
+            const plIcon = isProfit ? '+' : '';
+
+            DOM.totalPlValue.className = `text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight font-mono transition-colors duration-500 truncate ${val === 0 ? 'text-slate-400 dark:text-gray-600' : plColorClass}`;
+            DOM.totalPlValue.innerText = `${plIcon}${formatCurrency(pl)}`;
+            
+            if (val === 0) {
+                DOM.totalPlPercent.classList.add('hidden');
+                DOM.totalPlPercent.classList.remove('flex');
+            } else {
+                DOM.totalPlPercent.classList.remove('hidden');
+                DOM.totalPlPercent.classList.add('flex');
+                
+                DOM.totalPlPercent.className = `text-[10px] sm:text-xs font-mono flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 dark:bg-white/5 rounded-md w-fit transition-all duration-500 border ${borderClass} ${plColorClass}`;
+                DOM.plDot.className = `w-1.5 h-1.5 rounded-full shrink-0 ${bgDot} ${isProfit ? 'animate-pulse' : ''}`;
+                DOM.plText.innerText = `${plIcon}${Math.abs(plPct).toFixed(2)}%`;
+            }
+        }
+
+        /* ====================================================================
+           CHART SUBSYSTEM
+           ==================================================================== */
+        function initChart() {
+            const ctx = document.getElementById('portfolioChart').getContext('2d');
+            const isDark = APP_STATE.theme === 'dark';
+            
+            Chart.defaults.color = isDark ? '#94a3b8' : '#64748b';
+            Chart.defaults.font.family = 'JetBrains Mono, monospace';
+            Chart.defaults.font.size = window.innerWidth < 768 ? 10 : 12;
+
+            APP_STATE.chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: [], datasets: [{ data: [], backgroundColor: [], borderWidth: 0, hoverOffset: 12 }] },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    layout: { padding: window.innerWidth < 768 ? 5 : 10 },
+                    plugins: {
+                        legend: { 
+                            position: window.innerWidth < 768 ? 'bottom' : 'right', 
+                            labels: { usePointStyle: true, padding: 20, boxWidth: 8, color: isDark ? '#cbd5e1' : '#475569' } 
+                        },
+                        tooltip: {
+                            backgroundColor: isDark ? 'rgba(5, 5, 7, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                            titleColor: isDark ? '#fff' : '#0f172a',
+                            titleFont: { family: 'JetBrains Mono', weight: 'bold' },
+                            bodyColor: isDark ? '#e2e8f0' : '#334155',
+                            bodyFont: { family: 'JetBrains Mono' },
+                            borderColor: isDark ? 'rgba(34, 211, 238, 0.3)' : 'rgba(14, 165, 233, 0.3)',
+                            borderWidth: 1,
+                            padding: 16,
+                            cornerRadius: 8,
+                            boxPadding: 6,
+                            callbacks: { label: function(c) { return ` ${c.label}: ${formatCurrency(c.parsed)}`; } }
+                        }
+                    },
+                    animation: { animateScale: true, animateRotate: true, duration: 1200, easing: 'easeOutExpo' }
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                if(APP_STATE.chartInstance) {
+                    const newPos = window.innerWidth < 768 ? 'bottom' : 'right';
+                    const newPad = window.innerWidth < 768 ? 5 : 10;
+                    if (APP_STATE.chartInstance.options.plugins.legend.position !== newPos) {
+                        APP_STATE.chartInstance.options.plugins.legend.position = newPos;
+                        APP_STATE.chartInstance.options.layout.padding = newPad;
+                        APP_STATE.chartInstance.update();
+                    }
+                }
+            });
+        }
+
+        function updateChartData(labels, data, backgrounds) {
+            if (!APP_STATE.chartInstance) return;
+            APP_STATE.chartInstance.data.labels = labels;
+            APP_STATE.chartInstance.data.datasets[0].data = data;
+            APP_STATE.chartInstance.data.datasets[0].backgroundColor = backgrounds;
+            APP_STATE.chartInstance.update();
+        }
+
+        function getChartColor(index) {
+            const colors = [ '#0ea5e9', '#8b5cf6', '#06b6d4', '#6366f1', '#3b82f6', '#a855f7', '#14b8a6', '#4f46e5' ];
+            return colors[index % colors.length];
+        }
+
+        /* ====================================================================
+           NOTIFICATION NOTIFIER
+           ==================================================================== */
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const isDark = APP_STATE.theme === 'dark';
+            
+            const config = {
+                success: { color: isDark ? 'text-brand-400' : 'text-brand-600', border: isDark ? 'border-brand-400/30' : 'border-brand-600/30', accent: isDark ? 'bg-brand-400' : 'bg-brand-500' },
+                error: { color: isDark ? 'text-red-400' : 'text-red-600', border: isDark ? 'border-red-400/30' : 'border-red-600/30', accent: isDark ? 'bg-red-500' : 'bg-red-600' },
+                warning: { color: isDark ? 'text-amber-400' : 'text-amber-600', border: isDark ? 'border-amber-400/30' : 'border-amber-600/30', accent: isDark ? 'bg-amber-500' : 'bg-amber-500' }
+            };
+            const c = config[type];
+
+            toast.className = `panel border ${c.border} px-4 py-4 flex items-start gap-3 shadow-2xl w-full toast-enter relative overflow-hidden pointer-events-auto bg-slate-50/95 dark:bg-obsidian-800/95 backdrop-blur-2xl rounded-xl z-[90]`;
+            toast.innerHTML = `
+                <div class="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 ${c.accent}"></div>
+                <div class="flex-grow pl-2">
+                    <h4 class="text-[10px] sm:text-xs font-mono font-bold tracking-widest ${c.color} uppercase">${sanitizeText(title)}</h4>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-gray-300 mt-1.5 font-sans leading-relaxed">${sanitizeText(message)}</p>
+                </div>
+                <button type="button" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors focus:outline-none p-1 shrink-0" onclick="this.parentElement.remove()">
+                     <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            `;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                if(toast.parentElement) {
+                    toast.classList.replace('toast-enter', 'toast-exit');
+                    setTimeout(() => toast.remove(), 400);
+                }
+            }, 5000);
+        }
+
+        /* ====================================================================
+           EVENT MAPPING
+           ==================================================================== */
+        function setupEventListeners() {
+            DOM.form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const symbol = document.getElementById('symbol').value;
+                const amount = document.getElementById('amount').value;
+                const price = document.getElementById('price').value;
+                executeLedgerEntry(symbol, amount, price);
+            });
+
+            DOM.refreshBtn.addEventListener('click', () => {
+                if (APP_STATE.portfolio.length > 0) {
+                    const uniqueSymbols = [...new Set(APP_STATE.portfolio.map(p => p.symbol))];
+                    fetchPrices(uniqueSymbols);
+                } else {
+                    showToast("SYNC IDLE", "Ledger empty. Nothing to synchronize.", "warning");
+                }
+            });
+
+            DOM.themeToggle.addEventListener('click', toggleTheme);
+            
+            // Modal Events
+            DOM.btnCancelDelete.addEventListener('click', closeDeleteModal);
+            DOM.btnConfirmDelete.addEventListener('click', confirmAssetDeletion);
+            DOM.deleteModalOverlay.addEventListener('click', (e) => {
+                if (e.target === DOM.deleteModalOverlay) closeDeleteModal();
+            });
+        }
+
+        /* ====================================================================
+           AMBIENT PHYSICS ENGINE
+           ==================================================================== */
+        function initCanvasBackground() {
+            const ctx = DOM.canvas.getContext('2d', { alpha: false });
+            let width, height, particles = [];
+            
+            function resize() {
+                width = DOM.canvas.width = window.innerWidth;
+                height = DOM.canvas.height = window.innerHeight;
+            }
+            
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = (Math.random() - 0.5) * 0.4;
+                    this.vy = (Math.random() - 0.5) * 0.4;
+                    this.size = Math.random() * 1.5 + 0.5;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+                }
+                draw(isDark) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = isDark ? 'rgba(34, 211, 238, 0.4)' : 'rgba(14, 165, 233, 0.4)';
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                // Dynamic scaling ensures performance parity on low-memory mobile devices
+                const isMobile = window.innerWidth < 768;
+                const particleCount = isMobile ? 25 : 50; 
+                for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+            }
+
+            function animate() {
+                const isDark = APP_STATE.theme === 'dark';
+                
+                ctx.fillStyle = isDark ? '#050507' : '#f1f5f9';
+                ctx.fillRect(0, 0, width, height);
+                
+                const connectionColor = isDark ? '34, 211, 238' : '14, 165, 233';
+                const connectionDistance = window.innerWidth < 768 ? 100 : 150;
+
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw(isDark);
+                    
+                    for (let j = i; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist < connectionDistance) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            const opacity = (0.15 - dist/(connectionDistance * 8)); 
+                            ctx.strokeStyle = `rgba(${connectionColor}, ${opacity > 0 ? opacity : 0})`; 
+                            ctx.lineWidth = 0.8;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', () => { 
+                resize(); 
+                if(Math.abs(width - window.innerWidth) > 100) initParticles();
+            });
+            
+            resize();
+            initParticles();
+            animate();
+        }
+
+        // Native DOM Hydration Equivalent (Guaranteed Mount Safety)
+        window.addEventListener('DOMContentLoaded', initApp);
+
+    </script>
+</body>
+</html>
